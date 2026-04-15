@@ -1,0 +1,12 @@
+﻿namespace Leaves.Leaves.Application.Abstraction.Repositories;
+
+public interface ILeaveRepository
+{
+    Task<bool?>IsThePersonel(int personelId);
+
+    Task<int> GetAllLeavesByPersonelIdForTheOneYear(int personelId);
+
+    Task<Leaves.Domain.Leave?> AddTheLeave(Leaves.Domain.Leave leave);
+
+    Task<List<Domain.Leave>?> GetLeavesNotApproved(List<int> personelIdList);
+}
