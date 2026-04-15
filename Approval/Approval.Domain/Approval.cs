@@ -1,4 +1,6 @@
-﻿namespace Approval.Approval.Domain;
+﻿using Shared;
+
+namespace Approval.Approval.Domain;
 
 public class Approval
 {
@@ -10,7 +12,7 @@ public class Approval
     
     public int ManagerId { get; set; }   
 
-    public ApprovalStatus Status { get; set; } 
+    public LeaveStatus Status { get; set; } 
 
     public string? RejectionReason { get; set; }
 

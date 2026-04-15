@@ -3,4 +3,6 @@
 public interface IApprovalRepository
 {
     Task<Domain.Approval> CreateApproval(Domain.Approval approval);
+    
+    Task DeleteApproval(int id); 
 }

@@ -51,39 +51,51 @@ public class ServiceResult
 
     public static ServiceResult ErrorFromRefit(ApiException apiException)
     {
-        
-        //Burdaki apiException'ı soyle dusun once ilk servisten hata gelince ne oıldugunu yazıyoruz//
-        
-        
-        /*
-         *   exception.StatusCode   // HTTP status (404 vs)
-             exception.Content      // API’den gelen JSON hata
-             exception.Message      // Genel hata mesajı
-         */
-        
-        if (apiException.Content is not null)
+        if (string.IsNullOrWhiteSpace(apiException.Content))
         {
             return new ServiceResult
             {
                 StatusCode = apiException.StatusCode,
-
-                Fail = new ProblemDetails()
+                Fail = new ProblemDetails
                 {
-                    Title = apiException.Message
+                    Title = "Remote service error",
+                    Detail = apiException.Message
                 }
             };
         }
 
-        var theProblemDetails = JsonSerializer.Deserialize<ProblemDetails>(apiException.Content);
-
-        return new ServiceResult
+        try
         {
-            Fail = theProblemDetails,
-            StatusCode = apiException.StatusCode,
-        };
+            var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(
+                apiException.Content,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
+            return new ServiceResult
+            {
+                StatusCode = apiException.StatusCode,
+                Fail = problemDetails ?? new ProblemDetails
+                {
+                    Title = "Remote service error",
+                    Detail = apiException.Content
+                }
+            };
+        }
+        catch
+        {
+            return new ServiceResult
+            {
+                StatusCode = apiException.StatusCode,
+                Fail = new ProblemDetails
+                {
+                    Title = "Remote service error",
+                    Detail = apiException.Content
+                }
+            };
+        }
     }
-    
 }
 
 public class ServiceResult<T>:ServiceResult
@@ -137,16 +149,7 @@ public class ServiceResult<T>:ServiceResult
 
         };
     }
-
-    public new static ServiceResult<T> Error(ProblemDetails problemDetail, HttpStatusCode httpStatusCode)
-    {
-        return new ServiceResult<T>()
-        {
-            Fail = problemDetail,
-            StatusCode = httpStatusCode
-        };
-    }
-
+    
     public new static ServiceResult<T> Error(string title, string description, HttpStatusCode httpStatusCode)
     {
         return new ServiceResult<T>()
@@ -198,4 +201,5 @@ public class ServiceResult<T>:ServiceResult
     }
 
 
+   
 }

@@ -9,17 +9,12 @@ public class GetPersonelByManagerIdQueryHandler(IDepartmentRepository repository
 {
     public async Task<ServiceResult<List<PersonelIdDto>>> Handle(GetPersonelByManagerIdQuery request, CancellationToken cancellationToken)
     {
-        var personelList=await repository.GetPersonelsByManagerIdAsync(request.ManagerId);
+        var personelList = await repository.GetPersonelsByManagerIdAsync(request.ManagerId);
 
-        var personelDtoList = new List<PersonelIdDto>();
+        var personelDtoList = personelList
+            .Select(x => new PersonelIdDto(x.Id))
+            .ToList();
 
-        foreach (var personel in personelList)
-        {
-            var dto = new PersonelIdDto(personel.Id);
-            
-            personelDtoList.Add(dto);
-        }
-        
         return ServiceResult<List<PersonelIdDto>>.SuccessOk(personelDtoList);
     }
 }

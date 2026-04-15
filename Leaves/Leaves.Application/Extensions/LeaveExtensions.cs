@@ -1,4 +1,6 @@
 ﻿using Leaves.Leaves.Application.Features.CreateLeave;
+using Leaves.Leaves.Application.Features.UpdateLeave;
+
 namespace Leaves.Leaves.Application.Extensions;
 
 public static class LeavesExtensions
@@ -9,6 +11,8 @@ public static class LeavesExtensions
 
         group.AddCreateLeaveEndpoint();
 
+        group.AddUpdateLeaveEndpoint();
+        
         return app;
     }
 }

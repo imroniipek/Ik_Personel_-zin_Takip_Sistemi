@@ -2,6 +2,7 @@
 using Leaves.Leaves.Application.Abstraction.Repositories;
 using Leaves.Leaves.Domain;
 using Microsoft.EntityFrameworkCore;
+using Shared;
 
 namespace Leaves.Leave.Infrastucture.Repository;
 
@@ -43,5 +44,18 @@ public class LeaveRepository(LeaveDbContext context):ILeaveRepository
             .AsNoTracking()
             .Where(x => personelIdList.Contains(x.PersonelId) && x.Status == LeaveStatus.Pending)
             .ToListAsync();
+    }
+
+    public async Task Update(Leaves.Domain.Leave requestLeave)
+    {
+        context.Update(requestLeave);
+
+        await context.SaveChangesAsync();
+        
+    }
+
+    public async Task<Leaves.Domain.Leave?> FindTheLeaveByLeaveId(int leaveId)
+    {
+        return await context.Leaves.FirstOrDefaultAsync(x => x.Id == leaveId);
     }
 }

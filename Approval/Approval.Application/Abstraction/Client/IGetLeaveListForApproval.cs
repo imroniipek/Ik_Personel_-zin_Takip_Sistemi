@@ -1,13 +1,12 @@
-﻿using System.Collections;
-using Leaves.Leaves.Domain;
+﻿using Leaves.Leaves.Domain;
 using Refit;
 
 namespace Approval.Approval.Application.Abstraction.Client;
 
-public interface IGetLeaveListForApproval : IEnumerable
+public interface IGetLeaveListForApproval
 {
     [Get("api/GetLeaveListForApproval")]
 
-    Task<List<Leave>> GetLeaveListForApproval(List<Personel.Personel.Domain.Personel> personelList);
+    Task<List<Leave>> GetLeaveListForApproval(List<int> personelList);
 
 }

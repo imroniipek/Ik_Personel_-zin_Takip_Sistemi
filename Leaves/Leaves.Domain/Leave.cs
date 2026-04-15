@@ -1,4 +1,5 @@
-﻿using Shared.Entities;
+﻿using Shared;
+using Shared.Entities;
 
 namespace Leaves.Leaves.Domain;
 

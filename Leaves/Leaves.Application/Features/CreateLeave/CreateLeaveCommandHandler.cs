@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using Leaves.Leaves.Application.Abstraction.Clients;
 using Leaves.Leaves.Application.Abstraction.Repositories;
-using Leaves.Leaves.Domain;
 using MediatR;
+using Shared;
 
 namespace Leaves.Leaves.Application.Features.CreateLeave;
 
