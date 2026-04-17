@@ -1,5 +1,6 @@
 ﻿using Leaves.Leaves.Application.Abstraction.Repositories;
 using MediatR;
+using Shared.ServiceResult;
 
 namespace Leaves.Leaves.Application.Features.GetLeavesForApproval;
 
@@ -10,7 +11,7 @@ public class GetLeavesForApprovalQueryHandler(ILeaveRepository repository)
         GetLeavesForApprovalQuery request,
         CancellationToken cancellationToken)
     {
-        var leaves = await repository.GetLeavesNotApproved(request.PersonelIdList);
+        var leaves = await repository.GetLeavesNotApproved(request.PersonelId);
 
         return ServiceResult<List<Domain.Leave>>.SuccessOk(leaves!);
     }

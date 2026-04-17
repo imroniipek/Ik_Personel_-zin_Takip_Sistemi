@@ -8,7 +8,7 @@ public interface ILeaveRepository
 
     Task<Leaves.Domain.Leave?> AddTheLeave(Leaves.Domain.Leave leave);
 
-    Task<List<Domain.Leave>?> GetLeavesNotApproved(List<int> personelIdList);
+    Task<List<Domain.Leave>?> GetLeavesNotApproved(int personelId);
     Task  Update(Domain.Leave requestLeave);
 
     Task<Domain.Leave?> FindTheLeaveByLeaveId(int leaveId);

@@ -3,6 +3,7 @@ using Leaves.Leaves.Application.Abstraction.Clients;
 using Leaves.Leaves.Application.Abstraction.Repositories;
 using MediatR;
 using Shared;
+using Shared.ServiceResult;
 
 namespace Leaves.Leaves.Application.Features.CreateLeave;
 
@@ -15,7 +16,7 @@ public class CreateLeaveCommandHandler(
         CreateLeaveCommand request,
         CancellationToken cancellationToken)
     {
-        if (request.EndedDate.Date < request.StartedDate.Date)
+        if (request.EndedDate < request.StartedDate)
         {
             return ServiceResult<CreateLeaveResponse>.Error(
                 "Invalid date range",
@@ -25,10 +26,6 @@ public class CreateLeaveCommandHandler(
         }
 
         var thePersonelHire = await personelApi.GetThePersonelHire(request.PersonelId);
-        
-        Console.WriteLine(thePersonelHire.PersonelId);
-        
-        Console.WriteLine(thePersonelHire.HireDate);
 
         if (thePersonelHire is null)
         {
@@ -52,7 +49,7 @@ public class CreateLeaveCommandHandler(
 
         var usedLeaveDays = await repository.GetAllLeavesByPersonelIdForTheOneYear(request.PersonelId);
 
-        var requestedLeaveDays = (request.EndedDate.Date - request.StartedDate.Date).Days + 1;
+        var requestedLeaveDays = request.EndedDate.DayNumber - request.StartedDate.DayNumber + 1;
 
         if (totalEntitledDays < usedLeaveDays + requestedLeaveDays)
         {
@@ -89,24 +86,22 @@ public class CreateLeaveCommandHandler(
         );
     }
 
-    private int CalculateLeaveDays(DateTime hireDate, DateTime today)
+    private int CalculateLeaveDays(DateOnly hireDate, DateTime today)
     {
-        var years = today.Year - hireDate.Year;
+        var todayDate = DateOnly.FromDateTime(today);
 
-        if (hireDate.Date > today.AddYears(-years))
+        int years = todayDate.Year - hireDate.Year;
+
+        if (todayDate < hireDate.AddYears(years))
         {
             years--;
         }
 
         if (years < 1)
-        {
             return 0;
-        }
 
         if (years <= 5)
-        {
             return 14;
-        }
 
         return 20;
     }

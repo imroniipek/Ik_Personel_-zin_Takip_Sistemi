@@ -3,9 +3,9 @@ using Leaves.Leave.Infrastucture.Repository;
 using Leaves.Leaves.Application.Abstraction.Clients;
 using Leaves.Leaves.Application.Abstraction.Repositories;
 using Leaves.Leaves.Application.Extensions;
+using Leaves.Leaves.Application.Features.CreateLeave;
 using Microsoft.EntityFrameworkCore;
 using Refit;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +14,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<LeaveDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+
 builder.Services.AddScoped<ILeaveRepository, LeaveRepository>();
 
 builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(Leaves.Leaves.Application.Features.CreateLeave.CreateLeaveCommand).Assembly));
+    cfg.RegisterServicesFromAssemblyContaining<CreateLeaveCommandHandler>());
 
 builder.Services.AddRefitClient<IPersonelApi>()
     .ConfigureHttpClient(c =>

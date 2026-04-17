@@ -1,5 +1,6 @@
 ﻿using Leaves.Leaves.Application.Abstraction.Repositories;
 using MediatR;
+using Shared.ServiceResult;
 
 namespace Leaves.Leaves.Application.Features.UpdateLeave;
 

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Shared.Dtos;
+using Shared.ServiceResult;
 
 namespace Leaves.Leaves.Application.Features.UpdateLeave;
 

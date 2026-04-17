@@ -1,6 +1,6 @@
 ﻿using MediatR;
+using Shared.ServiceResult;
 
 namespace Leaves.Leaves.Application.Features.GetLeavesForApproval;
 
-public record GetLeavesForApprovalQuery(List<int> PersonelIdList):IRequest<ServiceResult<List<Domain.Leave>>>
-{}
+public record GetLeavesForApprovalQuery(int PersonelId) : IRequest<ServiceResult<List<Domain.Leave>>>;
