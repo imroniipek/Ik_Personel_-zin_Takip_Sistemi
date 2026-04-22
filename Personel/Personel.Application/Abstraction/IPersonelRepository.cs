@@ -1,4 +1,6 @@
-﻿namespace Personel.Personel.Application.Abstraction;
+﻿using Shared.ServiceResult;
+
+namespace Personel.Personel.Application.Abstraction;
 
 public interface IPersonelRepository
 {
@@ -8,4 +10,6 @@ public interface IPersonelRepository
     Task<Domain.Personel> CreateNewPersonelAsync(Domain.Personel personel);
 
     Task<List<Domain.Personel>> GetAllPersonelsAsync();
+
+    Task<int> GetAllPersonelsCountAsync();
 }

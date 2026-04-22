@@ -1,6 +1,3 @@
 ﻿namespace Personel.Personel.Application.Features.Personel.CreateManager;
 
-public class CreateManagerResponse
-{
-    
-}
+public record CreateManagerResponse(int DepartmentId,string DepartmentName,int PersonelId);

@@ -8,17 +8,22 @@ public class PersonelRepository(PersonelDbContext context) : IPersonelRepository
 {
     public async Task<Domain.Personel?> GetPersonelByIdAsync(int personelId)
     {
-        return await context.personels.FindAsync(personelId);
+        return await context.Personels.FindAsync(personelId);
     }
 
     public async Task<Domain.Personel> CreateNewPersonelAsync(Domain.Personel personel)
     {
-        var entityEntry = await context.personels.AddAsync(personel);
+        var entityEntry = await context.Personels.AddAsync(personel);
         await context.SaveChangesAsync();
 
         return entityEntry.Entity;
     }
 
-    public Task<List<Domain.Personel>> GetAllPersonelsAsync()=>context.personels.AsNoTracking().Include(x => x.Department).ToListAsync();
-    
+    public async Task<List<Domain.Personel>> GetAllPersonelsAsync()=>await context.Personels.AsNoTracking().Include(x => x.Department).ToListAsync();
+    public async Task<int> GetAllPersonelsCountAsync()
+    {
+        return await context.Personels
+            .AsNoTracking()
+            .CountAsync();
+    }
 }

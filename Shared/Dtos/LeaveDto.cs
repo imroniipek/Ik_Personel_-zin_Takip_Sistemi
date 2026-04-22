@@ -1,3 +1,4 @@
 ﻿namespace Shared.Dtos;
 
-public record LeaveDto(int Id,int PersonelId,LeaveStatus Status,DateTime StartDate,DateTime EndDateTime );
+public record LeaveDto(int Id,int PersonelId,LeaveStatus Status,
+    DateOnly StartDate,DateOnly EndDateTime );

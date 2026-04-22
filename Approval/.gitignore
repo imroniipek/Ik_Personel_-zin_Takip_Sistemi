@@ -1,0 +1,17 @@
+# Build folders
+bin/
+obj/
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local development config
+appsettings.Development.json

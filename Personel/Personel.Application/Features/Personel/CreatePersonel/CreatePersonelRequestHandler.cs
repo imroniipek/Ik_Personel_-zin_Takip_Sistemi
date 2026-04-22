@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Personel.Personel.Application.Abstraction;
+using Shared.ServiceResult;
 
 namespace Personel.Personel.Application.Features.Personel.CreatePersonel;
 
@@ -22,16 +22,17 @@ public class CreatePersonelRequestHandler(
 
         if (request.HireDate == null)
         {
-            thePersonel.HireDate = DateTime.Now;
+            thePersonel.HireDate = DateOnly.FromDateTime(DateTime.Now);
+            
         }
         else
         {
-            thePersonel.HireDate = (DateTime)request.HireDate;
+            thePersonel.HireDate = (DateOnly)request.HireDate;
         }
         var createdPersonel = await personelRepository.CreateNewPersonelAsync(thePersonel);
 
         return ServiceResult<CreatePersonelResponse>.SuccessCreatedOk(
-            new CreatePersonelResponse(createdPersonel.Id),
+            new CreatePersonelResponse(createdPersonel),
             $"/api/personels/{createdPersonel.Id}"
         );
     }

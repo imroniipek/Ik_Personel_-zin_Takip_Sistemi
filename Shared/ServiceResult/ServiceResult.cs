@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Refit;
 using ProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
+namespace Shared.ServiceResult;
 
 public class ServiceResult
 {
@@ -122,32 +122,62 @@ public class ServiceResult<T>:ServiceResult
         };
     }
 
+    public static ServiceResult<T> SuccessAsNoContent()
+    {
+        return new ServiceResult<T>()
+        {
+            StatusCode = HttpStatusCode.NoContent
+        };
+    }
+    
     public new static ServiceResult<T> ErrorFromProblemDetails(ApiException exception)
     {
         Console.WriteLine(exception.Content);
 
-        if (exception.Content is null)
+        if (string.IsNullOrWhiteSpace(exception.Content))
         {
             return new ServiceResult<T>
             {
                 StatusCode = exception.StatusCode,
-
-                Fail = new ProblemDetails()
+                Fail = new ProblemDetails
                 {
-                    Title = exception.Message,
-                },
+                    Title = "Remote service error",
+                    Detail = exception.Message
+                }
             };
         }
 
-        var theProblemDetails =
-            JsonSerializer.Deserialize<ProblemDetails>(exception.Content);
-
-        return new ServiceResult<T>()
+        try
         {
-            Fail = theProblemDetails,
-            StatusCode = exception.StatusCode,
+            var theProblemDetails = JsonSerializer.Deserialize<ProblemDetails>(
+                exception.Content,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
-        };
+            return new ServiceResult<T>
+            {
+                StatusCode = exception.StatusCode,
+                Fail = theProblemDetails ?? new ProblemDetails
+                {
+                    Title = "Remote service error",
+                    Detail = exception.Content
+                }
+            };
+        }
+        catch
+        {
+            return new ServiceResult<T>
+            {
+                StatusCode = exception.StatusCode,
+                Fail = new ProblemDetails
+                {
+                    Title = "Remote service error",
+                    Detail = exception.Content
+                }
+            };
+        }
     }
     
     public new static ServiceResult<T> Error(string title, string description, HttpStatusCode httpStatusCode)

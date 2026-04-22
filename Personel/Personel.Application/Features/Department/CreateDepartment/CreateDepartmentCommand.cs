@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Shared.ServiceResult;
 
 namespace Personel.Personel.Application.Features.Department.CreateDepartment;
 

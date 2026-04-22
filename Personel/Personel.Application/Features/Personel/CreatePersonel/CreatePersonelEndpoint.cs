@@ -10,7 +10,7 @@ public static class CreatePersonelEndpoint
     public static RouteGroupBuilder CreateNewPersonelEndpoint(this RouteGroupBuilder builder)
     {
         builder.MapPost("/CreateNewPersonel",
-            async ([AsParameters] CreatePersonelCommand command, IMediator mediator) =>
+            async ([FromBody] CreatePersonelCommand command, IMediator mediator) =>
             {
                 var result = await mediator.Send(command);
                 return result.ToResult();

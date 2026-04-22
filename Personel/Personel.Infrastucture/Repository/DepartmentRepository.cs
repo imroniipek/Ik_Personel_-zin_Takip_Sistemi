@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Personel.Personel.Application.Abstraction;
+using Personel.Personel.Application.Features.Department.GetAllDepartmentWithNames;
 using Personel.Personel.Domain;
 using Personel.Personel.Infrastucture.Context;
 
@@ -9,19 +10,47 @@ public class DepartmentRepository(PersonelDbContext context) : IDepartmentReposi
 {
     public async Task<Department> CreateNewDepartmentAsync(Department department)
     {
-        var entityEntry = await context.departments.AddAsync(department);
-
+        var entityEntry = await context.Departments.AddAsync(department);
         await context.SaveChangesAsync();
-
         return entityEntry.Entity;
     }
-    
+
     public async Task<List<Domain.Personel>> GetPersonelsByManagerIdAsync(int managerId)
     {
-        var department = await context.departments
+        var department = await context.Departments
             .Include(x => x.Personels)
             .FirstOrDefaultAsync(x => x.ManagerId == managerId);
 
-        return department.Personels.ToList();
+        return department?.Personels.ToList() ?? new List<Domain.Personel>();
+    }
+
+    public async Task<bool> IsExistAsync(int departmentId)
+    {
+        return await context.Departments.AnyAsync(x => x.Id == departmentId);
+    }
+
+    public async Task<Department?> GetDepartmentByDepartmentIdAsync(int departmentId)
+    {
+        return await context.Departments
+            .FirstOrDefaultAsync(x => x.Id == departmentId);
+    }
+
+    public async Task Update(Department department)
+    {
+        context.Departments.Update(department);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<int> GetDepartmentCountAsync()
+    {
+        return await context.Departments.AsNoTracking().CountAsync();
+    }
+
+    public async Task<List<DepartmentDto>> GetAllDepartmentsWithNamesAsync()
+    {
+        return  await context.Departments.AsNoTracking()
+            .Select(x => new DepartmentDto(x.Id, x.Name, x.Manager != null ? $"{x.Manager.FirstName} {x.Manager.LastName}" : "-")).ToListAsync();
+
+
     }
 }

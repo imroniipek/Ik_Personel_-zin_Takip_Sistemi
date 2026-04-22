@@ -1,8 +1,6 @@
-﻿using Shared.Entities;
+﻿namespace Personel.Personel.Application.Features.Personel.GetAllPersonel;
 
-namespace Personel.Personel.Domain;
-
-public class Personel : BaseEntity
+public class PersonelDto
 {
     public string FirstName { get; set; } = null!;
     
@@ -12,8 +10,6 @@ public class Personel : BaseEntity
     
     public DateOnly HireDate { get; set; }
     
-    public int DepartmentId { get; set; }
-    
-    public Department Department { get; set; } = null!;
-    
+    public string DepartmentName { get; set; } = null!;
+
 }

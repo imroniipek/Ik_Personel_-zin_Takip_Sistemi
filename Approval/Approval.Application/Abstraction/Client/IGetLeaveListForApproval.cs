@@ -1,12 +1,11 @@
 ﻿using Leaves.Leaves.Domain;
 using Refit;
+using Shared.ServiceResult;
 
 namespace Approval.Approval.Application.Abstraction.Client;
 
 public interface IGetLeaveListForApproval
 {
-    [Get("api/GetLeaveListForApproval")]
-
-    Task<List<Leave>> GetLeaveListForApproval(List<int> personelList);
-
+    [Post("/api/GetLeaveListForApproval")]
+    Task<ServiceResult<List<Leave>>> GetLeaveListForApproval([Body] int personelId);
 }

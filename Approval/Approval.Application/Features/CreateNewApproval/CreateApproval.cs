@@ -1,6 +1,6 @@
-﻿using Approval.Approval.Domain;
-using MediatR;
+﻿using MediatR;
 using Shared;
+using Shared.ServiceResult;
 
 namespace Approval.Approval.Application.Features.CreateNewApproval;
 

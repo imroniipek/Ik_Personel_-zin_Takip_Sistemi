@@ -5,8 +5,6 @@ namespace Approval.Approval.Application.Abstraction.Client;
 
 public interface IPutLeaveAfterApproval
 {
-
     [Put("/api/UpdateTheLeaveAfterApproval/{leaveId}")]
-    Task UpdateTheLeave(int leaveId, [Body] LeaveDto leaveDto);
-    
+    Task UpdateTheLeave([AliasAs("leaveId")] int leaveId, [Body] LeaveDto leaveDto);
 }

@@ -4,5 +4,5 @@ public class PersonelInfoDto
 {
     public int PersonelId { get; set; }
     
-    public DateTime HireDate { get; set; }
+    public DateOnly HireDate { get; set; }
 }

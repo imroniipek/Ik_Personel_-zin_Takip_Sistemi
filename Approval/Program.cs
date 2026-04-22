@@ -1,13 +1,37 @@
+using Approval.Approval.Application;
+using Approval.Approval.Application.Abstraction.Client;
+using Approval.Approval.Application.Abstraction.Repository;
+using Approval.Approval.Infrastucture.Context;
+using Approval.Approval.Infrastucture.Repository;
+using Microsoft.EntityFrameworkCore;
+using Refit;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<ApprovalDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+
+builder.Services.AddScoped<IApprovalRepository, ApprovalRepository>();
+
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(Approval.Approval.Application.Features.CreateNewApproval.CreateApproval).Assembly));
+builder.Services.AddRefitClient<IGetPersonelByManagerIdFromServices>()
+    .ConfigureHttpClient(c =>
+        c.BaseAddress = new Uri(builder.Configuration["Services:PersonelServiceUrl"]!));
+
+builder.Services.AddRefitClient<IGetLeaveListForApproval>()
+    .ConfigureHttpClient(c =>
+        c.BaseAddress = new Uri(builder.Configuration["Services:LeaveServiceUrl"]!));
+
+builder.Services.AddRefitClient<IPutLeaveAfterApproval>()
+    .ConfigureHttpClient(c =>
+        c.BaseAddress = new Uri(builder.Configuration["Services:LeaveServiceUrl"]!));
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -16,29 +40,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
+app.AddAllExtension();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

@@ -15,7 +15,7 @@ public static class ServiceResultExtension
 
             HttpStatusCode.BadRequest => Results.Problem(serviceResult.Fail!),
 
-            HttpStatusCode.NotFound => Results.Problem(serviceResult.Fail!),
+            HttpStatusCode.NotFound => Results.Problem(serviceResult.Fail),
 
             HttpStatusCode.Conflict => Results.Conflict(serviceResult),
 
@@ -25,7 +25,7 @@ public static class ServiceResultExtension
 
     }
 
-    public static IResult ToResult(this global::ServiceResult serviceResult)
+    public static IResult ToResult(this global::Shared.ServiceResult.ServiceResult serviceResult)
     {
         return serviceResult.StatusCode switch
         {

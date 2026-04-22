@@ -1,10 +1,11 @@
 ﻿using Refit;
 using Shared.Dtos;
+using Shared.ServiceResult;
 
 namespace Approval.Approval.Application.Abstraction.Client;
 
 public interface IGetPersonelByManagerIdFromServices
 {
     [Get("/api/getPersonelByManagerId")]
-    Task<List<PersonelIdDto>> GetPersonelByManagerId([AliasAs("managerId")] int managerId);
+    Task<ServiceResult<List<PersonelIdDto>>> GetPersonelByManagerId([AliasAs("managerId")] int managerId);
 }

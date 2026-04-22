@@ -4,6 +4,7 @@ using Approval.Approval.Application.Abstraction.Repository;
 using MediatR;
 using Refit;
 using Shared.Dtos;
+using Shared.ServiceResult;
 
 namespace Approval.Approval.Application.Features.CreateNewApproval;
 
@@ -18,13 +19,20 @@ public class CreateApprovalHandler(
         CreateApproval request,
         CancellationToken cancellationToken)
     {
-        Domain.Approval? createdApproval=null;
+        Domain.Approval? createdApproval = null;
 
         try
         {
-            var personelList = await managerIdFromServices.GetPersonelByManagerId(request.ManagerId);
+            Console.WriteLine("=== CREATE APPROVAL STARTED ===");
+            Console.WriteLine($"ManagerId: {request.ManagerId}");
+            Console.WriteLine($"PersonelId: {request.PersonelId}");
+            Console.WriteLine($"Status: {request.Status}");
 
-            if (!personelList.Any())
+            var personelResult = await managerIdFromServices.GetPersonelByManagerId(request.ManagerId);
+            Console.WriteLine("1- Personel service çağrısı başarılı");
+            Console.WriteLine($"Personel count: {personelResult.Data?.Count}");
+
+            if (personelResult.Data is null || !personelResult.Data.Any())
             {
                 return ServiceResult<CreateApprovalResponse>.Error(
                     "Personeller bulunamadı",
@@ -33,29 +41,45 @@ public class CreateApprovalHandler(
                 );
             }
 
-            var personelIds = personelList.Select(x => x.PersonelId).ToList();
+            var selectedPersonel = personelResult.Data
+                .FirstOrDefault(x => x.PersonelId == request.PersonelId);
 
-            var leaveList = await leaveListForApproval.GetLeaveListForApproval(personelIds);
-
-            if (!leaveList.Any())
+            if (selectedPersonel is null)
             {
                 return ServiceResult<CreateApprovalResponse>.Error(
-                    "İzin bulunamadı",
-                    "Onay bekleyen izin bulunamadı.",
+                    "Personel bulunamadı",
+                    $"{request.PersonelId} id'li personel bu manager'a bağlı değil.",
                     HttpStatusCode.NotFound
                 );
             }
 
-            var selectedLeave = leaveList.FirstOrDefault(x => x.PersonelId == request.PersonelId);
+            Console.WriteLine("2- Personel doğrulaması başarılı");
+
+            var leaveResult = await leaveListForApproval.GetLeaveListForApproval(request.PersonelId);
+            Console.WriteLine("3- Leave service çağrısı başarılı");
+            Console.WriteLine($"Leave count: {leaveResult.Data?.Count}");
+
+            if (leaveResult.Data is null || !leaveResult.Data.Any())
+            {
+                return ServiceResult<CreateApprovalResponse>.Error(
+                    "İzin bulunamadı",
+                    $"{request.PersonelId} personele ait onay bekleyen izin bulunamadı.",
+                    HttpStatusCode.NotFound
+                );
+            }
+
+            var selectedLeave = leaveResult.Data.FirstOrDefault();
 
             if (selectedLeave is null)
             {
                 return ServiceResult<CreateApprovalResponse>.Error(
                     "İzin bulunamadı",
-                    "Bu personele ait onay bekleyen izin bulunamadı.",
+                    $"{request.PersonelId} personele ait uygun izin bulunamadı.",
                     HttpStatusCode.NotFound
                 );
             }
+
+            Console.WriteLine($"4- Seçilen LeaveId: {selectedLeave.Id}");
 
             var newApproval = new Domain.Approval
             {
@@ -67,9 +91,8 @@ public class CreateApprovalHandler(
                 RejectionReason = request.RejectReason
             };
 
-            await repository.CreateApproval(newApproval);
-            
             createdApproval = await repository.CreateApproval(newApproval);
+            Console.WriteLine($"5- Approval oluşturuldu. ApprovalId: {createdApproval.Id}");
 
             var updatedLeaveDto = new LeaveDto(
                 selectedLeave.Id,
@@ -80,6 +103,9 @@ public class CreateApprovalHandler(
             );
 
             await putLeaveAfterApproval.UpdateTheLeave(selectedLeave.Id, updatedLeaveDto);
+            Console.WriteLine("6- Leave update başarılı");
+
+            Console.WriteLine("=== CREATE APPROVAL SUCCESS ===");
 
             return ServiceResult<CreateApprovalResponse>.SuccessOk(
                 new CreateApprovalResponse(
@@ -91,18 +117,31 @@ public class CreateApprovalHandler(
         }
         catch (ApiException ex)
         {
+            Console.WriteLine("=== API EXCEPTION ===");
+            Console.WriteLine($"StatusCode: {ex.StatusCode}");
+            Console.WriteLine($"Message: {ex.Message}");
+            Console.WriteLine($"Content: {ex.Content}");
+
             if (createdApproval != null)
             {
                 await repository.DeleteApproval(createdApproval.Id);
+                Console.WriteLine($"Rollback yapıldı. Silinen ApprovalId: {createdApproval.Id}");
             }
+
             return ServiceResult<CreateApprovalResponse>.ErrorFromProblemDetails(ex);
         }
         catch (Exception ex)
         {
-            if (createdApproval != null) 
+            Console.WriteLine("=== GENERAL EXCEPTION ===");
+            Console.WriteLine($"Message: {ex.Message}");
+            Console.WriteLine($"StackTrace: {ex.StackTrace}");
+
+            if (createdApproval != null)
             {
                 await repository.DeleteApproval(createdApproval.Id);
+                Console.WriteLine($"Rollback yapıldı. Silinen ApprovalId: {createdApproval.Id}");
             }
+
             return ServiceResult<CreateApprovalResponse>.Error(
                 "Beklenmeyen hata",
                 ex.Message,

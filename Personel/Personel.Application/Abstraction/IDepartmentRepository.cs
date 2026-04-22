@@ -1,4 +1,5 @@
-﻿using Personel.Personel.Domain;
+﻿using Personel.Personel.Application.Features.Department.GetAllDepartmentWithNames;
+using Personel.Personel.Domain;
 
 namespace Personel.Personel.Application.Abstraction;
 
@@ -7,4 +8,14 @@ public interface IDepartmentRepository
     Task<Department> CreateNewDepartmentAsync(Department department);
 
     Task<List<Domain.Personel>> GetPersonelsByManagerIdAsync(int managerId);
+
+    Task<bool> IsExistAsync(int departmentId);
+
+    Task<Department?> GetDepartmentByDepartmentIdAsync(int departmentId);
+
+    Task Update(Department department);
+
+    Task<int> GetDepartmentCountAsync();
+
+    Task<List<DepartmentDto>> GetAllDepartmentsWithNamesAsync();
 }
