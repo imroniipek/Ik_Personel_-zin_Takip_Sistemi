@@ -26,4 +26,7 @@ public class PersonelRepository(PersonelDbContext context) : IPersonelRepository
             .AsNoTracking()
             .CountAsync();
     }
+
+    public Task<List<Domain.Personel>> GetAllPersonelsByDepartmentIdAsync(int departmentId)=>context.Personels.AsNoTracking().Where(x => x.DepartmentId == departmentId).ToListAsync();
+    
 }

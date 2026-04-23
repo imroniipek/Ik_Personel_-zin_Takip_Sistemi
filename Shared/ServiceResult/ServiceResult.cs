@@ -130,7 +130,7 @@ public class ServiceResult<T>:ServiceResult
         };
     }
     
-    public new static ServiceResult<T> ErrorFromProblemDetails(ApiException exception)
+    public  static ServiceResult<T> ErrorFromProblemDetails(ApiException exception)
     {
         Console.WriteLine(exception.Content);
 
@@ -193,7 +193,7 @@ public class ServiceResult<T>:ServiceResult
         };
     }
 
-    public new static ServiceResult<T> ErrorAsNotFound()
+    public  static ServiceResult<T> ErrorAsNotFound()
     {
         return new ServiceResult<T>()
         {
@@ -210,7 +210,7 @@ public class ServiceResult<T>:ServiceResult
     
     
 
-    public new static ServiceResult ErrorFromValidation(IDictionary<string, object?> errors)
+    public static ServiceResult ErrorFromValidation(IDictionary<string, object?> errors)
     {
         var problemDetails = new ProblemDetails
         {

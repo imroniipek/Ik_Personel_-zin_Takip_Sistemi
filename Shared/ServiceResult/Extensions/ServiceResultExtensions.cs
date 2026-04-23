@@ -13,9 +13,9 @@ public static class ServiceResultExtension
 
             HttpStatusCode.Created => Results.Created($"/api/resource/{serviceResult.Data}", serviceResult.Data),
 
-            HttpStatusCode.BadRequest => Results.Problem(serviceResult.Fail!),
+            HttpStatusCode.BadRequest => Results.BadRequest(serviceResult.Fail!),
 
-            HttpStatusCode.NotFound => Results.Problem(serviceResult.Fail),
+            HttpStatusCode.NotFound => Results.NotFound(serviceResult.Fail),
 
             HttpStatusCode.Conflict => Results.Conflict(serviceResult),
 
@@ -31,9 +31,9 @@ public static class ServiceResultExtension
         {
             HttpStatusCode.NoContent=>Results.NoContent(),
             
-            HttpStatusCode.BadRequest => Results.Problem(serviceResult.Fail!),
+            HttpStatusCode.BadRequest => Results.BadRequest(serviceResult.Fail!),
 
-            HttpStatusCode.NotFound => Results.Problem(serviceResult.Fail!),
+            HttpStatusCode.NotFound => Results.NotFound(serviceResult.Fail!),
 
             HttpStatusCode.Conflict => Results.Conflict(serviceResult.Fail),
 

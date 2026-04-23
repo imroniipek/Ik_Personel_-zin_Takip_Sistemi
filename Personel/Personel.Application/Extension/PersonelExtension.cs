@@ -5,6 +5,7 @@ using Personel.Personel.Application.Features.Department.GetPersonelsByManagerId;
 using Personel.Personel.Application.Features.Personel.CreateManager;
 using Personel.Personel.Application.Features.Personel.CreatePersonel;
 using Personel.Personel.Application.Features.Personel.GetAllPersonel;
+using Personel.Personel.Application.Features.Personel.GetAllPersonelsByDepartmentId;
 using Personel.Personel.Application.Features.Personel.GetPersonelForLeave;
 using Personel.Personel.Application.Features.Personel.GetPersonelsCount;
 
@@ -25,6 +26,7 @@ public static class EndpointExtensions
         group.MapGetAllPersonelCountEndpoint();
         group.GetTheDepartmentCount();
         group.AddGetAllDepartmentsWithNamesQueryEndpoint();
+        group.AddGetAllPersonelByDepartmentIdEnpoint();
 
         return app;
     }

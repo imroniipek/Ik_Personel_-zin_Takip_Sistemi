@@ -1,14 +1,15 @@
 ﻿using MediatR;
 using Personel.Personel.Application.Abstraction;
+using Personel.Personel.Application.Features.Personel.Dtos;
 using Shared.ServiceResult;
 
 namespace Personel.Personel.Application.Features.Personel.CreatePersonel;
 
 public class CreatePersonelRequestHandler(
     IPersonelRepository personelRepository
-) : IRequestHandler<CreatePersonelCommand, ServiceResult<CreatePersonelResponse>>
+) : IRequestHandler<CreatePersonelCommand, ServiceResult<PersonelDto>>
 {
-    public async Task<ServiceResult<CreatePersonelResponse>> Handle(
+    public async Task<ServiceResult<PersonelDto>> Handle(
         CreatePersonelCommand request,
         CancellationToken cancellationToken)
     {
@@ -31,8 +32,8 @@ public class CreatePersonelRequestHandler(
         }
         var createdPersonel = await personelRepository.CreateNewPersonelAsync(thePersonel);
 
-        return ServiceResult<CreatePersonelResponse>.SuccessCreatedOk(
-            new CreatePersonelResponse(createdPersonel),
+        return ServiceResult<PersonelDto>.SuccessCreatedOk(
+            new PersonelDto(createdPersonel),
             $"/api/personels/{createdPersonel.Id}"
         );
     }

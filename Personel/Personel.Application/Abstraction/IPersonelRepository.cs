@@ -12,4 +12,6 @@ public interface IPersonelRepository
     Task<List<Domain.Personel>> GetAllPersonelsAsync();
 
     Task<int> GetAllPersonelsCountAsync();
+
+    Task<List<Domain.Personel>> GetAllPersonelsByDepartmentIdAsync(int departmentId);
 }
