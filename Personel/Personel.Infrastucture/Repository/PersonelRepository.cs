@@ -27,6 +27,20 @@ public class PersonelRepository(PersonelDbContext context) : IPersonelRepository
             .CountAsync();
     }
 
-    public Task<List<Domain.Personel>> GetAllPersonelsByDepartmentIdAsync(int departmentId)=>context.Personels.AsNoTracking().Where(x => x.DepartmentId == departmentId).ToListAsync();
-    
+    public Task<List<Domain.Personel>> GetAllPersonelsByDepartmentIdAsync(int departmentId)=>context.Personels.AsNoTracking().Include(x => x.Department).Where(x => x.DepartmentId == departmentId).ToListAsync();
+
+    public async Task<Domain.Personel?> GetPersonelByEmailAsync(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return null;
+
+        return await context.Personels
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower());
+    }
+
+    public async Task<Domain.Personel?> GetPersonelById(int personelId)
+    {
+        return await context.Personels.AsNoTracking().FirstOrDefaultAsync(x => x.Id == personelId);
+    }
 }

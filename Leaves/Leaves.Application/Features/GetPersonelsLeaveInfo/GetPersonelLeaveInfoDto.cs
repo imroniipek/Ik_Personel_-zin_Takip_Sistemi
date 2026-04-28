@@ -1,6 +1,3 @@
 ﻿namespace Leaves.Leaves.Application.Features.GetPersonelsLeaveInfo;
 
-public class GetPersonelLeaveInfoDto
-{
-    
-}
+public record GetPersonelLeaveInfoDto(int PersonelId, int TotalLeaveRight, int UsedLeaveDays, int RemainingLeaveDays );

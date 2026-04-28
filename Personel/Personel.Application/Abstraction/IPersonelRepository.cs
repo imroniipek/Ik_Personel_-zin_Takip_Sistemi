@@ -1,6 +1,4 @@
-﻿using Shared.ServiceResult;
-
-namespace Personel.Personel.Application.Abstraction;
+﻿namespace Personel.Personel.Application.Abstraction;
 
 public interface IPersonelRepository
 {
@@ -14,4 +12,7 @@ public interface IPersonelRepository
     Task<int> GetAllPersonelsCountAsync();
 
     Task<List<Domain.Personel>> GetAllPersonelsByDepartmentIdAsync(int departmentId);
+
+    Task<Domain.Personel?> GetPersonelByEmailAsync(string email);
+    
 }

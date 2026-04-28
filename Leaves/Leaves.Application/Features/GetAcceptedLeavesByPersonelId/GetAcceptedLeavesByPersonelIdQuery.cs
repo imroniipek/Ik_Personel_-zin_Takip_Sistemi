@@ -1,6 +1,6 @@
-﻿namespace Leaves.Leaves.Application.Features.GetAcceptedLeavesByPersonelId;
+﻿using MediatR;
+using Shared.ServiceResult;
 
-public class GetAcceptedLeavesByPersonelIdQuery
-{
-    
-}
+namespace Leaves.Leaves.Application.Features.GetAcceptedLeavesByPersonelId;
+
+public record GetAcceptedLeavesByPersonelIdQuery(int PersonelId):IRequest<ServiceResult<LeaveListResponse>>{}

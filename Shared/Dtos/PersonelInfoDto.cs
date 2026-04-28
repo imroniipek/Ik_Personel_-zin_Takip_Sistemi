@@ -1,6 +1,6 @@
 ﻿namespace Shared.Dtos;
 
-public class PersonelInfoDto
+public record PersonelInfoDto
 {
     public int PersonelId { get; set; }
     

@@ -1,5 +1,6 @@
 ﻿using Leaves.Leave.Infrastucture.Context;
 using Leaves.Leaves.Application.Abstraction.Repositories;
+using Leaves.Leaves.Application.Features.GetAcceptedLeavesByPersonelId;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 
@@ -55,5 +56,63 @@ public class LeaveRepository(LeaveDbContext context) : ILeaveRepository
         return await context.Leaves
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == leaveId);
+    }
+
+    public async Task<int> UsedLeaveDays(int personelId)
+    {
+        var leaves = await context.Leaves
+            .AsNoTracking()
+            .Where(x => x.PersonelId == personelId &&
+                        x.Status == LeaveStatus.Pending)
+            .ToListAsync();
+
+        var totalUsedDays = 0;
+
+        foreach (var leave in leaves)
+        {
+            var dayCount = leave.EndedDate.DayNumber - leave.StartedDate.DayNumber ;
+            totalUsedDays += dayCount;
+        }
+
+        return totalUsedDays;
+    }
+    
+    public async Task<LeaveListResponse> GetApprovedLeavesByPersonelId(int personelId)
+    {
+        var leaves = await context.Leaves
+            .AsNoTracking()
+            .Where(x => x.PersonelId == personelId &&
+                        x.Status == LeaveStatus.Approved)
+            .ToListAsync();
+        
+        var totalUsedDays = 0;
+
+        foreach (var leave in leaves)
+        {
+            var dayCount = leave.EndedDate.DayNumber - leave.StartedDate.DayNumber ;
+            totalUsedDays += dayCount;
+        }
+        
+        var response = new LeaveListResponse(totalUsedDays, leaves);
+
+        return response;
+    }
+
+    public Task<LeaveListResponse> GetRejectedLeavesByPersonelId(int personelId)
+    {
+        throw new NotImplementedException();
+    }
+    
+    public async Task<LeaveListResponse> GetPendingLeavesByPersonelId(int personelId)
+    {
+        var leaves = await context.Leaves
+            .AsNoTracking()
+            .Where(x => x.PersonelId == personelId &&
+                        x.Status == LeaveStatus.Pending)
+            .ToListAsync();
+
+        var response = new LeaveListResponse(leaves.Count, leaves);
+
+        return response;
     }
 }

@@ -15,12 +15,23 @@ public class GetAllPersonelQueryHandler
         this._repository = repository;
     }
 
-    public async Task<ServiceResult<List<PersonelDto>>> Handle(GetAllPersonelQuery request, CancellationToken cancellationToken)
+    public async Task<ServiceResult<List<PersonelDto>>> Handle(
+        GetAllPersonelQuery request,
+        CancellationToken cancellationToken)
     {
         var theList = await _repository.GetAllPersonelsAsync();
 
-        var result = theList.Select(x => new PersonelDto(x)).ToList();
-        
+        var result = theList
+            .Select(x => new PersonelDto(
+                x.Id,
+                x.FirstName,
+                x.LastName,
+                x.Email,
+                x.HireDate,
+                x.Department?.Name ?? "-"
+            ))
+            .ToList();
+
         return ServiceResult<List<PersonelDto>>.SuccessOk(result);
     }
 }

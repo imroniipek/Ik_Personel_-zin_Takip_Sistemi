@@ -23,14 +23,8 @@ public class CreateApprovalHandler(
 
         try
         {
-            Console.WriteLine("=== CREATE APPROVAL STARTED ===");
-            Console.WriteLine($"ManagerId: {request.ManagerId}");
-            Console.WriteLine($"PersonelId: {request.PersonelId}");
-            Console.WriteLine($"Status: {request.Status}");
-
-            var personelResult = await managerIdFromServices.GetPersonelByManagerId(request.ManagerId);
-            Console.WriteLine("1- Personel service çağrısı başarılı");
-            Console.WriteLine($"Personel count: {personelResult.Data?.Count}");
+            var personelResult =
+                await managerIdFromServices.GetPersonelByManagerId(request.ManagerId);
 
             if (personelResult.Data is null || !personelResult.Data.Any())
             {
@@ -53,11 +47,8 @@ public class CreateApprovalHandler(
                 );
             }
 
-            Console.WriteLine("2- Personel doğrulaması başarılı");
-
-            var leaveResult = await leaveListForApproval.GetLeaveListForApproval(request.PersonelId);
-            Console.WriteLine("3- Leave service çağrısı başarılı");
-            Console.WriteLine($"Leave count: {leaveResult.Data?.Count}");
+            var leaveResult =
+                await leaveListForApproval.GetLeaveListForApproval(request.PersonelId);
 
             if (leaveResult.Data is null || !leaveResult.Data.Any())
             {
@@ -68,18 +59,20 @@ public class CreateApprovalHandler(
                 );
             }
 
-            var selectedLeave = leaveResult.Data.FirstOrDefault();
+            var selectedLeave = leaveResult.Data
+                .FirstOrDefault(x =>
+                    x.Id == request.LeaveId &&
+                    x.PersonelId == request.PersonelId
+                );
 
             if (selectedLeave is null)
             {
                 return ServiceResult<CreateApprovalResponse>.Error(
                     "İzin bulunamadı",
-                    $"{request.PersonelId} personele ait uygun izin bulunamadı.",
+                    $"{request.PersonelId} personele ait {request.LeaveId} id'li uygun izin bulunamadı.",
                     HttpStatusCode.NotFound
                 );
             }
-
-            Console.WriteLine($"4- Seçilen LeaveId: {selectedLeave.Id}");
 
             var newApproval = new Domain.Approval
             {
@@ -92,7 +85,6 @@ public class CreateApprovalHandler(
             };
 
             createdApproval = await repository.CreateApproval(newApproval);
-            Console.WriteLine($"5- Approval oluşturuldu. ApprovalId: {createdApproval.Id}");
 
             var updatedLeaveDto = new LeaveDto(
                 selectedLeave.Id,
@@ -102,44 +94,37 @@ public class CreateApprovalHandler(
                 selectedLeave.EndedDate
             );
 
-            await putLeaveAfterApproval.UpdateTheLeave(selectedLeave.Id, updatedLeaveDto);
-            Console.WriteLine("6- Leave update başarılı");
+          await putLeaveAfterApproval.UpdateTheLeave(
+                selectedLeave.Id,
+                updatedLeaveDto
+            );
 
-            Console.WriteLine("=== CREATE APPROVAL SUCCESS ===");
+            var createApprovalResponse = new CreateApprovalResponse(
+                request.PersonelId,
+                selectedLeave.Id,
+                request.Status
+            );
 
-            return ServiceResult<CreateApprovalResponse>.SuccessOk(
-                new CreateApprovalResponse(
-                    request.PersonelId,
-                    selectedLeave.Id,
-                    request.Status
-                )
+            return ServiceResult<CreateApprovalResponse>.SuccessCreatedOk(
+                createApprovalResponse,
+                $"/api/approvals/"
             );
         }
         catch (ApiException ex)
         {
-            Console.WriteLine("=== API EXCEPTION ===");
-            Console.WriteLine($"StatusCode: {ex.StatusCode}");
-            Console.WriteLine($"Message: {ex.Message}");
-            Console.WriteLine($"Content: {ex.Content}");
-
-            if (createdApproval != null)
+            if (createdApproval is not null)
             {
                 await repository.DeleteApproval(createdApproval.Id);
-                Console.WriteLine($"Rollback yapıldı. Silinen ApprovalId: {createdApproval.Id}");
             }
 
-            return ServiceResult<CreateApprovalResponse>.ErrorFromProblemDetails(ex);
+            return ServiceResult<CreateApprovalResponse>
+                .ErrorFromProblemDetails(ex);
         }
         catch (Exception ex)
         {
-            Console.WriteLine("=== GENERAL EXCEPTION ===");
-            Console.WriteLine($"Message: {ex.Message}");
-            Console.WriteLine($"StackTrace: {ex.StackTrace}");
-
-            if (createdApproval != null)
+            if (createdApproval is not null)
             {
                 await repository.DeleteApproval(createdApproval.Id);
-                Console.WriteLine($"Rollback yapıldı. Silinen ApprovalId: {createdApproval.Id}");
             }
 
             return ServiceResult<CreateApprovalResponse>.Error(

@@ -31,9 +31,16 @@ public class CreatePersonelRequestHandler(
             thePersonel.HireDate = (DateOnly)request.HireDate;
         }
         var createdPersonel = await personelRepository.CreateNewPersonelAsync(thePersonel);
-
+        
         return ServiceResult<PersonelDto>.SuccessCreatedOk(
-            new PersonelDto(createdPersonel),
+            new PersonelDto(
+                createdPersonel.Id,
+                createdPersonel.FirstName,
+                createdPersonel.LastName,
+                createdPersonel.Email,
+                createdPersonel.HireDate,
+                createdPersonel.Department?.Name ?? "-"
+            ),
             $"/api/personels/{createdPersonel.Id}"
         );
     }

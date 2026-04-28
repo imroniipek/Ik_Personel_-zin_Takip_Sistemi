@@ -1,3 +1,3 @@
 ﻿namespace Leaves.Leaves.Application.Features.GetAcceptedLeavesByPersonelId;
 
-public class LeaveResponse_
+public record LeaveListResponse(int CountList, List<Domain.Leave> LeavesList);

@@ -44,7 +44,8 @@ public class CreateManagerHandler(
 
         await departmentRepository.Update(theDepartment);
 
-        var response = new CreateManagerResponse(request.DepartmentId, theDepartment.Name,request.ManagerId);
+        var response = new CreateManagerResponse(request.DepartmentId, theDepartment.Name, request.ManagerId,
+            $"{theManager.FirstName} {theManager.LastName}");
 
         return ServiceResult<CreateManagerResponse>.SuccessCreatedOk(
             response,

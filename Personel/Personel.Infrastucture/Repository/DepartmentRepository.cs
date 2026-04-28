@@ -50,7 +50,14 @@ public class DepartmentRepository(PersonelDbContext context) : IDepartmentReposi
     {
         return  await context.Departments.AsNoTracking()
             .Select(x => new DepartmentDto(x.Id, x.Name, x.Manager != null ? $"{x.Manager.FirstName} {x.Manager.LastName}" : "-")).ToListAsync();
+    }
 
-
+    public async Task<string?> GetManagerNameByIdAsync(int departmentId)
+    {
+        return await context.Departments
+            .AsNoTracking()
+            .Where(d => d.Id == departmentId)
+            .Select(d => d.Manager != null ? d.Manager.FirstName + " " + d.Manager.LastName : null)
+            .FirstOrDefaultAsync();
     }
 }

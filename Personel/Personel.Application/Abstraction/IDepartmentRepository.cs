@@ -18,4 +18,6 @@ public interface IDepartmentRepository
     Task<int> GetDepartmentCountAsync();
 
     Task<List<DepartmentDto>> GetAllDepartmentsWithNamesAsync();
+
+    Task<string?> GetManagerNameByIdAsync(int departmentId);
 }

@@ -2,8 +2,8 @@ using Leaves.Leave.Infrastucture.Context;
 using Leaves.Leave.Infrastucture.Repository;
 using Leaves.Leaves.Application.Abstraction.Clients;
 using Leaves.Leaves.Application.Abstraction.Repositories;
-using Leaves.Leaves.Application.Extensions;
 using Leaves.Leaves.Application.Features.CreateLeave;
+using Leaves.Leaves.Application.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Refit;
 
@@ -12,18 +12,37 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddDbContext<LeaveDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+{
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("SqlServer")
+    );
+});
 
 builder.Services.AddScoped<ILeaveRepository, LeaveRepository>();
 
 builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssemblyContaining<CreateLeaveCommandHandler>());
+{
+    cfg.RegisterServicesFromAssemblyContaining<CreateLeaveCommandHandler>();
+});
 
 builder.Services.AddRefitClient<IPersonelApi>()
-    .ConfigureHttpClient(c =>
+    .ConfigureHttpClient(client =>
     {
-        c.BaseAddress = new Uri(builder.Configuration["Services:PersonelServiceUrl"]!);
+        client.BaseAddress = new Uri(
+            builder.Configuration["Services:PersonelServiceUrl"]!
+        );
     });
 
 var app = builder.Build();
@@ -34,7 +53,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Local geliştirmede sorun çıkarıyorsa kapalı kalsın
+// app.UseHttpsRedirection();
+
+app.UseCors("AllowAngular");
 
 app.LeaveEndpoints();
 

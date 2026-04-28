@@ -1,6 +1,7 @@
-﻿namespace Leaves.Leaves.Application.Features.GetPendingLeavesByPersenolIdQuery;
+﻿using Leaves.Leaves.Application.Features.GetAcceptedLeavesByPersonelId;
+using MediatR;
+using Shared.ServiceResult;
 
-public class GetPendingLeavesByPersonelIdQuery
-{
-    
-}
+namespace Leaves.Leaves.Application.Features.GetPendingLeavesByPersenolIdQuery;
+
+public record GetPendingLeavesByPersonelIdQuery(int PersonelId):IRequest<ServiceResult<LeaveListResponse>>{}

@@ -122,7 +122,7 @@ public class ServiceResult<T>:ServiceResult
         };
     }
 
-    public static ServiceResult<T> SuccessAsNoContent()
+    public new static ServiceResult<T> SuccessAsNoContent()
     {
         return new ServiceResult<T>()
         {

@@ -1,6 +1,6 @@
-﻿namespace Leaves.Leaves.Application.Features.GetPersonelsLeaveInfo;
+﻿using MediatR;
+using Shared.ServiceResult;
 
-public class GetpersonelLeaveInfoQuery
-{
-    
-}
+namespace Leaves.Leaves.Application.Features.GetPersonelsLeaveInfo;
+
+public record GetpersonelLeaveInfoQuery(int PersonelId):IRequest<ServiceResult<GetPersonelLeaveInfoDto>> {}

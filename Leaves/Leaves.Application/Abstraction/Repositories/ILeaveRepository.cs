@@ -1,4 +1,6 @@
-﻿namespace Leaves.Leaves.Application.Abstraction.Repositories;
+﻿using Leaves.Leaves.Application.Features.GetAcceptedLeavesByPersonelId;
+
+namespace Leaves.Leaves.Application.Abstraction.Repositories;
 
 public interface ILeaveRepository
 {
@@ -13,4 +15,11 @@ public interface ILeaveRepository
 
     Task<Domain.Leave?> FindTheLeaveByLeaveId(int leaveId);
 
+    Task<int> UsedLeaveDays(int personelId);
+
+    Task<LeaveListResponse> GetApprovedLeavesByPersonelId(int personelId);
+    
+    Task<LeaveListResponse> GetRejectedLeavesByPersonelId(int personelId);
+    
+    Task<LeaveListResponse> GetPendingLeavesByPersonelId(int personelId);
 }

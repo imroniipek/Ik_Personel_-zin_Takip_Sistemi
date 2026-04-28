@@ -15,11 +15,15 @@ public class LeaveConfiguration : IEntityTypeConfiguration<Leaves.Domain.Leave>
             .IsRequired();
 
         builder.Property(x => x.StartedDate)
+            .HasColumnType("date")
             .IsRequired();
 
         builder.Property(x => x.EndedDate)
+            .HasColumnType("date")
             .IsRequired();
-        
-        builder.Property(x => x.Status).IsRequired();
+
+        builder.Property(x => x.Status)
+            .HasConversion<int>()
+            .IsRequired();
     }
 }
