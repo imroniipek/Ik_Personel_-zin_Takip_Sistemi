@@ -2,7 +2,7 @@
 using Shared.Dtos;
 using Shared.ServiceResult;
 
-namespace Personel.Personel.Application.Features.Department.GetPersonelsByManagerId;
+namespace Personel.Personel.Application.Features.Personel.GetPersonelsByManagerId;
 
 public record GetPersonelByManagerIdQuery(int ManagerId)
     : IRequest<ServiceResult<List<PersonelIdDto>>>;

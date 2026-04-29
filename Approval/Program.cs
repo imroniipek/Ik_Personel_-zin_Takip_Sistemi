@@ -30,6 +30,10 @@ builder.Services.AddRefitClient<IPutLeaveAfterApproval>()
     .ConfigureHttpClient(c =>
         c.BaseAddress = new Uri(builder.Configuration["Services:LeaveServiceUrl"]!));
 
+builder.Services.AddRefitClient<IGetPendingListByPersonelId>()
+    .ConfigureHttpClient(c =>
+        c.BaseAddress = new Uri(builder.Configuration["Services:LeaveServiceUrl"]!));
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

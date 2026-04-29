@@ -8,16 +8,13 @@ public static class GetLeavesEndpoint
 {
     public static RouteGroupBuilder AddGetLeavesForApproval(this RouteGroupBuilder builder)
     {
-        builder.MapPost("/GetLeaveListForApproval", async (
-            [FromBody] int personelId,
-            IMediator mediator) =>
-        {
-            var thequery = new GetLeavesForApprovalQuery(personelId);
-
-            var response = await mediator.Send(thequery);
-
-            return response.ToResult();
-        });
+        builder.MapGet("/GetLeaveListForApproval/{personelId:int}",
+            async (int personelId, IMediator mediator) =>
+            {
+                var query = new GetLeavesForApprovalQuery(personelId);
+                var response = await mediator.Send(query);
+                return response.ToResult();
+            });
         return builder;
     }
 }

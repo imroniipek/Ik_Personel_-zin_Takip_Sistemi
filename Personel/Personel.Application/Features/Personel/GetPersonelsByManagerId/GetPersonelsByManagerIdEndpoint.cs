@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Shared.ServiceResult.Extensions;
 
-namespace Personel.Personel.Application.Features.Department.GetPersonelsByManagerId;
+namespace Personel.Personel.Application.Features.Personel.GetPersonelsByManagerId;
 
 public static class GetPersonelsByManagerIdEndpoint
 {

@@ -53,9 +53,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Local geliştirmede sorun çıkarıyorsa kapalı kalsın
-// app.UseHttpsRedirection();
-
 app.UseCors("AllowAngular");
 
 app.LeaveEndpoints();

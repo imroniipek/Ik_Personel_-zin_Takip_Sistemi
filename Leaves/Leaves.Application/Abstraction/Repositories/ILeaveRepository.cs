@@ -22,4 +22,6 @@ public interface ILeaveRepository
     Task<LeaveListResponse> GetRejectedLeavesByPersonelId(int personelId);
     
     Task<LeaveListResponse> GetPendingLeavesByPersonelId(int personelId);
+
+    Task<List<Domain.Leave>> GetPendingLeavesForApprovalByPersonelId(int personelId);
 }

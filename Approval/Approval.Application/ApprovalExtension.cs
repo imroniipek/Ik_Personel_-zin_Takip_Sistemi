@@ -1,4 +1,5 @@
 ﻿using Approval.Approval.Application.Features.CreateNewApproval;
+using Approval.Approval.Application.Features.GetAllPersonelPendingListByManagerId;
 using Leaves.Leaves.Application.Features.CreateLeave;
 
 namespace Approval.Approval.Application;
@@ -9,7 +10,9 @@ public static class ApprovalExtension
     public static WebApplication AddAllExtension(this WebApplication app)
     {
 
-        app.MapGroup("/app/Approval").AddCreateExtension();
+        var group = app.MapGroup("/api");
+
+        group.AddGetAllPersonelPendingListByManagerIdEndpoint();
 
         return app;
     }

@@ -1,4 +1,5 @@
-﻿using Leaves.Leaves.Application.Abstraction.Repositories;
+﻿using System.Net;
+using Leaves.Leaves.Application.Abstraction.Repositories;
 using Leaves.Leaves.Application.Features.GetAcceptedLeavesByPersonelId;
 using MediatR;
 using Shared.ServiceResult;
@@ -12,6 +13,11 @@ public class GetPendingLeavesByPersonelIdQueryHandler(ILeaveRepository leaveRepo
     {
         var theLeaveListResponse = await leaveRepository.GetPendingLeavesByPersonelId(request.PersonelId);
         
-        return ServiceResult<LeaveListResponse>.SuccessOk(theLeaveListResponse);
+        if (theLeaveListResponse.LeavesList.Count > 0)
+        {
+            return ServiceResult<LeaveListResponse>.SuccessOk(theLeaveListResponse);
+        }
+
+        return ServiceResult<LeaveListResponse>.Error("Empty Fault", "Listede Eleman Yok", HttpStatusCode.BadRequest);
     }
 }

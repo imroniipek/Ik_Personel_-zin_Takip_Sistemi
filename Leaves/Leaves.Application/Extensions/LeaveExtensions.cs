@@ -2,7 +2,9 @@
 using Leaves.Leaves.Application.Features.GetAcceptedLeavesByPersonelId;
 using Leaves.Leaves.Application.Features.GetLeavesForApproval;
 using Leaves.Leaves.Application.Features.GetPendingLeavesByPersenolIdQuery;
+using Leaves.Leaves.Application.Features.GetPendingLeavesListForApprovalByPersonelId;
 using Leaves.Leaves.Application.Features.GetPersonelsLeaveInfo;
+using Leaves.Leaves.Application.Features.GetRejectedLeavesByPersonelId;
 using Leaves.Leaves.Application.Features.UpdateLeave;
 
 namespace Leaves.Leaves.Application.Extensions;
@@ -15,6 +17,8 @@ public static class LeavesExtensions
 
         group.AddCreateLeaveEndpoint();
 
+        group.AddGetPendingLeavesByPersonelIdQueryEndpoint();
+
         group.AddUpdateLeaveEndpoint();
 
         group.AddGetPersonelLeaveInfoEndpoint();
@@ -22,8 +26,9 @@ public static class LeavesExtensions
         group.AddGetLeavesForApproval();
 
         group.AddGetAcceptedLeavesByPersonelIdQueryEndpoint();
-
-        group.AddGetPendingLeavesByPersonelIdQueryEndpoint();
+        
+        group.AddGetPendingLeavesByPersonelIdEndpoint(); // 
+        group.AddRejectedLeavesByPersonelIdQueryEndpoint();
         
         return app;
     }

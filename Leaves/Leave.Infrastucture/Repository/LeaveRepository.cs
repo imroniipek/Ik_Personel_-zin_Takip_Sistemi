@@ -24,7 +24,7 @@ public class LeaveRepository(LeaveDbContext context) : ILeaveRepository
             .AsNoTracking()
             .Where(x => x.PersonelId == personelId &&
                         x.StartedDate >= startOfYear &&
-                        x.StartedDate < startOfNextYear)
+                        x.StartedDate < startOfNextYear&&x.Status==LeaveStatus.Approved)
             .ToListAsync();
 
         return theLeaveList.Sum(x => x.EndedDate.DayNumber - x.StartedDate.DayNumber + 1);
@@ -54,7 +54,6 @@ public class LeaveRepository(LeaveDbContext context) : ILeaveRepository
     public async Task<Leaves.Domain.Leave?> FindTheLeaveByLeaveId(int leaveId)
     {
         return await context.Leaves
-            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == leaveId);
     }
 
@@ -63,14 +62,14 @@ public class LeaveRepository(LeaveDbContext context) : ILeaveRepository
         var leaves = await context.Leaves
             .AsNoTracking()
             .Where(x => x.PersonelId == personelId &&
-                        x.Status == LeaveStatus.Pending)
+                        x.Status == LeaveStatus.Approved)
             .ToListAsync();
 
         var totalUsedDays = 0;
 
         foreach (var leave in leaves)
         {
-            var dayCount = leave.EndedDate.DayNumber - leave.StartedDate.DayNumber ;
+            var dayCount = (leave.EndedDate.DayNumber - leave.StartedDate.DayNumber)+1 ;
             totalUsedDays += dayCount;
         }
 
@@ -85,22 +84,21 @@ public class LeaveRepository(LeaveDbContext context) : ILeaveRepository
                         x.Status == LeaveStatus.Approved)
             .ToListAsync();
         
-        var totalUsedDays = 0;
-
-        foreach (var leave in leaves)
-        {
-            var dayCount = leave.EndedDate.DayNumber - leave.StartedDate.DayNumber ;
-            totalUsedDays += dayCount;
-        }
         
-        var response = new LeaveListResponse(totalUsedDays, leaves);
+        var response = new LeaveListResponse(leaves.Count, leaves);
 
         return response;
     }
 
-    public Task<LeaveListResponse> GetRejectedLeavesByPersonelId(int personelId)
+    public async Task<LeaveListResponse> GetRejectedLeavesByPersonelId(int personelId)
     {
-        throw new NotImplementedException();
+        var leaves = await context.Leaves
+            .AsNoTracking()
+            .Where(x => x.PersonelId == personelId &&
+                        x.Status == LeaveStatus.Rejected)
+            .ToListAsync();
+
+        return new LeaveListResponse(leaves.Count, leaves);
     }
     
     public async Task<LeaveListResponse> GetPendingLeavesByPersonelId(int personelId)
@@ -114,5 +112,17 @@ public class LeaveRepository(LeaveDbContext context) : ILeaveRepository
         var response = new LeaveListResponse(leaves.Count, leaves);
 
         return response;
+    }
+
+    public async Task<List<Leaves.Domain.Leave>> GetPendingLeavesForApprovalByPersonelId(int personelId)
+    {
+        var leaves = await context.Leaves
+            .AsNoTracking()
+            .Where(x => x.PersonelId == personelId &&
+                        x.Status == LeaveStatus.Pending)
+            .ToListAsync();
+
+        return leaves;
+
     }
 }

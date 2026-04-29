@@ -1,7 +1,7 @@
 ﻿using Personel.Personel.Application.Features.Department.CreateDepartment;
 using Personel.Personel.Application.Features.Department.GetAllDepartmentWithNames;
 using Personel.Personel.Application.Features.Department.GetDepartmentCount;
-using Personel.Personel.Application.Features.Department.GetPersonelsByManagerId;
+using Personel.Personel.Application.Features.Personel.GetPersonelsByManagerId;
 using Personel.Personel.Application.Features.Personel.CreateManager;
 using Personel.Personel.Application.Features.Personel.CreatePersonel;
 using Personel.Personel.Application.Features.Personel.GetAllPersonel;

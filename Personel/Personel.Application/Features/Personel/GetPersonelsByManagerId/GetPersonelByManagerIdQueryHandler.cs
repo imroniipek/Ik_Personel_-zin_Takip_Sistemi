@@ -3,7 +3,7 @@ using Personel.Personel.Application.Abstraction;
 using Shared.Dtos;
 using Shared.ServiceResult;
 
-namespace Personel.Personel.Application.Features.Department.GetPersonelsByManagerId;
+namespace Personel.Personel.Application.Features.Personel.GetPersonelsByManagerId;
 
 public class GetPersonelByManagerIdQueryHandler(IDepartmentRepository repository)
     : IRequestHandler<GetPersonelByManagerIdQuery, ServiceResult<List<PersonelIdDto>>>
